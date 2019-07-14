@@ -17,7 +17,11 @@ import cloneFinder.codeParser.methodData;
 import cloneFinder.codeParser.sourceParser;
 import cloneFinder.codeParser.parsedData;
 import cloneFinder.cloneDetection.badHash.hashAlgorithm;
-public class searchManager {
+/**
+ * @author ariel
+ *
+ */
+public class SearchManager {
 
     
     private int cloneType=1;
@@ -25,7 +29,7 @@ public class searchManager {
     private int granularity=2;
     
     
-    public searchManager(int granularity, int cloneType, int shingleLength) {
+    public SearchManager(int granularity, int cloneType, int shingleLength) {
     	
 		this.cloneType = cloneType;
         this.shingleLength = shingleLength;
@@ -33,9 +37,15 @@ public class searchManager {
 	}
 
 
-    private ArrayList<Pair<Long,Pair<Integer,Integer>>> getShingles(methodData method, hashAlgorithm algorithm, int shingleLength){
+    /**
+     * @param method : object with the information for a method. 
+     * @param algorithm: object that performs the hash according to the type of clone
+     * @param shingleLength: number of source code elements of a shingle (minimun text unit used during clone search)
+     * @return a list of pairs. pair -> [shingle hash value,[begin line in source code, end line in source code]]
+     */
+    private ArrayList<ShingleData> getShingles(methodData method, hashAlgorithm algorithm, int shingleLength){
 
-        ArrayList<Pair<Long,Pair<Integer,Integer>>> shingles= new ArrayList<Pair<Long,Pair<Integer,Integer>>>();
+        ArrayList<ShingleData> shingles= new ArrayList<ShingleData>();
         ArrayList<parsedData> sourceElements = method.getSourceCodeElements(granularity) ;
         for(int i=0;i+shingleLength <sourceElements.size();i++){
         	List<parsedData> groupTokens= sourceElements.subList(i, i+shingleLength);
@@ -43,29 +53,19 @@ public class searchManager {
             for (int j=0;j<groupTokens.size();j++) {
             	newShingle=newShingle.concat(groupTokens.get(j).getText());
             }
-           
             Pair<Integer,Integer> shinglePos = new Pair<Integer,Integer>(sourceElements.get(i).getBeginLine() ,sourceElements.get(i+shingleLength-1).getEndLine());
-            Pair<Long,Pair<Integer,Integer>> shingleData = new Pair<Long,Pair<Integer,Integer>>(algorithm.calcHash(newShingle),shinglePos);
-            if(shingleData.a!=0){ 
+            ShingleData shingleData = new ShingleData(algorithm.calcHash(newShingle),shinglePos);
+            if(shingleData.getHashValue()!=0){ 
             shingles.add(shingleData);
             }
-			
-			/*
-			 * System.out.println(newShingle+"##\n");
-			 * System.out.println("token##\n"+tokens.get(i+shingleLength).getBeginLine());
-			 * System.out.println("Fin## "+tokens.get(i+shingleLength).getEndLine());
-			 */
-			 	
-
-
         }
         return shingles;
 
     }
     
-    private ArrayList<Pair<Long,Pair<Integer,Integer>>> getSketch(methodData method, hashAlgorithm algorithm, int shingleLength, int sketchLength){
+    private ArrayList<ShingleData> getSketch(methodData method, hashAlgorithm algorithm, int shingleLength, int sketchLength){
 
-        ArrayList<Pair<Long,Pair<Integer,Integer>>> shingles= new ArrayList<Pair<Long,Pair<Integer,Integer>>>();
+        ArrayList<ShingleData> shingles= new ArrayList<ShingleData>();
         ArrayList<parsedData> tokens = method.getSourceCodeElements(granularity);
         int sketchBegin=tokens.get(0).getEndLine();
         int sketchEnd=0;
@@ -105,7 +105,7 @@ public class searchManager {
 						xor=sketch.get(k).hashCode();
 					}
 				}
-				Pair<Long,Pair<Integer,Integer>> shingleData = new Pair<Long,Pair<Integer,Integer>>(xor,shinglePos);
+				ShingleData shingleData = new ShingleData(xor,shinglePos);
 				shingles.add(shingleData);
 				sketch.remove(0);
 			}
@@ -114,7 +114,7 @@ public class searchManager {
 
     }
 
-    private ArrayList<Pair<Long,Pair<Integer,Integer>>> getSnippet(methodData method,hashAlgorithm algorithm){
+    private ArrayList<ShingleData> getSnippet(methodData method,hashAlgorithm algorithm){
      
         switch (this.granularity) {
             case 1:
@@ -151,14 +151,13 @@ public class searchManager {
 		hashAlgorithm cloneHash= new hashAlgorithm(this.cloneType);
 		Table<Long, String, Pair<Integer,Integer>> cloneTable = TreeBasedTable.create();
 		Iterator<methodData> methodIte=methodList.iterator();
-        ArrayList<Pair<Long,Pair<Integer,Integer>>> snippets=new ArrayList<Pair<Long,Pair<Integer,Integer>>>();
+        ArrayList<ShingleData> snippets=new ArrayList<ShingleData>();
         while(methodIte.hasNext()){
             methodData method = methodIte.next();
             
             snippets=getSnippet(method,cloneHash);
-            //snippets.sort(new SortbyLine());
             snippets.forEach((s)->{ 
-                cloneTable.put(s.a, method.getFullName(), s.b);
+                cloneTable.put(s.getHashValue(), method.getFullName(), s.getShingleLocation());
             });
              
         }

@@ -128,7 +128,7 @@ public void setFullName(String fullName) {
   public void setName(String name) {
       this.name = name;
   }
-
+//get the list of elements according to the desired granularity
   public ArrayList<parsedData> getSourceCodeElements(int granularity) {
 	  
 	  if(granularity==1) {return getCharacterSequence();}

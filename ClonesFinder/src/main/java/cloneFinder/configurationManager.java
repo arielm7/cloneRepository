@@ -15,7 +15,7 @@ import cloneFinder.output.generateResults;
 import cloneFinder.codeParser.sourceParser;
 import cloneFinder.cloneDetection.badHash.cloneDetector;
 import cloneFinder.cloneDetection.badHash.colition;
-import cloneFinder.cloneDetection.badHash.searchManager;
+import cloneFinder.cloneDetection.badHash.SearchManager;
 import cloneFinder.codeParser.methodData;
 
 /**
@@ -34,19 +34,23 @@ public class configurationManager {
 	
 	private int cloneType=typeOne;
 	private int granularity=token;
-	private int minimuSize=10;
+	private int minimunCloneSize=10;
+
+	//selection of the detection algorithm	
 	public void admin(Input input){
 		
 		if(input.clone2) {cloneType=typeTwo;}
 		else if(input.clone3) {cloneType=typeThree;}
 		if(input.granularityByCharacter) {granularity=character;}
 		else if(input.granularityBySentence) {granularity=statement;}
-		minimuSize=Integer.parseInt(input.minimumSize);
+		minimunCloneSize=Integer.parseInt(input.minimumSize);
+		
+		
 		sourceParser parser = new sourceParser();
-		ArrayList<methodData> projectMethodList = new ArrayList<methodData>();
+		ArrayList<methodData> projectMethodList = new ArrayList<methodData>(); //list to be filled with the parsed methods of the project
 		System.out.println("Inicio de extraccion de metodos");
 		System.out.println("analizando código fuente, "+input.listaArchivos.size()+" archivos por analizar");
-		for(int i=0;i<input.listaArchivos.size();i++){
+		for(int i=0;i<input.listaArchivos.size();i++){ //parsing all the methods per file
 	
 					try {
 						
@@ -58,11 +62,12 @@ public class configurationManager {
 					}	
 		}
 		System.out.println("Fin de extraccion de metodos");
+		//selection of the detection algorithm 
 		if (input.hash)
-			adminByHash(input,projectMethodList);
-		if (input.matrix)
+			detectionByHash(input,projectMethodList);
+		else if (input.matrix)
 			adminByMatrix(input,projectMethodList);
-		if (input.shingle)
+		else if (input.shingle)
 			adminByShingle(input,projectMethodList);
 	}
 	
@@ -72,18 +77,18 @@ public class configurationManager {
 	 */
 	/**
 	 * @param input
-	 * @param tempA
+	 * @param projectMethodList
 	 */
-	private void adminByHash(Input input,ArrayList<methodData> tempA){
+	private void detectionByHash(Input input,ArrayList<methodData> projectMethodList){
 		
 		int clonCant=0;
 		
-		System.out.println("analizando código fuente, "+tempA.size()+" métodos por analizar");
+		System.out.println("analizando código fuente, "+projectMethodList.size()+" métodos por analizar");
 		long startTime = System.nanoTime();
 		
-		searchManager busqueda = new searchManager(granularity, cloneType, minimuSize);
+		SearchManager busqueda = new SearchManager(granularity, cloneType, minimunCloneSize);
         cloneDetector detector= new cloneDetector();
-        Table<Long, String, Pair<Integer,Integer>> cloneTable=busqueda.search(tempA); 
+        Table<Long, String, Pair<Integer,Integer>> cloneTable=busqueda.search(projectMethodList); 
         
              
         

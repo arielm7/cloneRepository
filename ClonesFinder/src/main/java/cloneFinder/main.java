@@ -25,10 +25,10 @@ public class main {
 		//Get the configuration file path
 		Scanner myObj = new Scanner(System.in);
 	    System.out.println(S1);
-	    
 	    String absolutePath = myObj.nextLine();
+	    
 	    if(absolutePath.isEmpty()) {
-	    	absolutePath="/home/ariel/TEC/diseño/implementation/ClonesFinder/resources/entry.json";
+	    	absolutePath="/home/ariel/TEC/diseño/implementation/ClonesFinder/resources/entry.json"; //default path
 	    }
 	    System.out.println(S2 + absolutePath);
 	    
