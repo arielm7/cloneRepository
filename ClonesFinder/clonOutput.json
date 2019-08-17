@@ -1,0 +1,46 @@
+{
+    "Analisis": {
+        "Tamaño_minimo_clones": 84133,
+        "Tipos_clones": "Tipo 3",
+        "Nombre_proyecto": "fioglgnzqpryvuy",
+        "Fecha_procesamiento": "14/8/2019",
+        "Hora_procesamiento": "17:32",
+        "Ruta_proyecto": "/bzhyk/igtfy/momxc",
+        "Cantidad_clones": 18,
+        "Clones": [
+            {
+                "Metodo 1": "paper_clone2_test.java: staticMethod1()",
+                "Linea_Final_metodo_2": 125,
+                "Linea_inicio_metodo_2": 111,
+                "Metodo 2": "paper_clone2_test.java: staticMethod3()",
+                "Linea_inicio_metodo_1": 39,
+                "Linea_Final_metodo_1": 55
+            },
+            {
+                "Metodo 1": "paper_clone2_test.java: staticMethod1()",
+                "Linea_Final_metodo_2": 133,
+                "Linea_inicio_metodo_2": 125,
+                "Metodo 2": "paper_clone2_test.java: staticMethod3()",
+                "Linea_inicio_metodo_1": 18,
+                "Linea_Final_metodo_1": 26
+            },
+            {
+                "Metodo 1": "paper_clone2_test.java: staticMethod3()",
+                "Linea_Final_metodo_2": 26,
+                "Linea_inicio_metodo_2": 18,
+                "Metodo 2": "paper_clone2_test.java: staticMethod1()",
+                "Linea_inicio_metodo_1": 125,
+                "Linea_Final_metodo_1": 133
+            },
+            {
+                "Metodo 1": "paper_clone2_test.java: staticMethod3()",
+                "Linea_Final_metodo_2": 55,
+                "Linea_inicio_metodo_2": 39,
+                "Metodo 2": "paper_clone2_test.java: staticMethod1()",
+                "Linea_inicio_metodo_1": 111,
+                "Linea_Final_metodo_1": 125
+            }
+        ],
+        "Granularidad": ""
+    }
+}

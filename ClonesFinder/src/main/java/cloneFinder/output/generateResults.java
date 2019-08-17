@@ -2,33 +2,37 @@ package cloneFinder.output;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
+import org.json.JSONArray;
 import com.github.javaparser.utils.Pair;
-
 import cloneFinder.cloneDetection.badHash.colition;
 
-public class generateResults{
+public class generateResults {
 
-	ArrayList<Pair<String,colition>> finalCloneList;
-	
-	public generateResults(ArrayList<Pair<String, colition>> finalCloneList) {
+	private ArrayList<Pair<String, colition>> finalCloneList;
+	private JSONArray clonArray;
+	JsonGenereator json; 
+	public generateResults() {
 		super();
-		this.finalCloneList = finalCloneList;
+		this.clonArray = new JSONArray();
+		this.json = new JsonGenereator();
 	}
 
-	public void printResults(ArrayList<Pair<String,colition>> finalCloneListPerFunction, String funcName) {
-		Iterator<Pair<String,colition>>finalCloneListPerFunctionIterator=finalCloneListPerFunction.iterator();
-		//System.out.println("\n############################################################################\n");
-		//System.out.println("\n--------------Clones detectados para el método: "+funcName+ "--------------\n");
-		while(finalCloneListPerFunctionIterator.hasNext()) {
-			Pair<String,colition> clone=finalCloneListPerFunctionIterator.next();
-        	System.out.println("Ubicacion del codigo en el metodo: "+funcName+" "+clone.b.getThisFunc());
-        	System.out.println("Clon detectado en el método: "+clone.a+" "+clone.b.getThatFunc()+"\n");
-        	
-    
-        
-        	}
+	public void printResults(final ArrayList<Pair<String, colition>> finalCloneListPerFunction, final String funcName) {
+		final Iterator<Pair<String, colition>> finalCloneListPerFunctionIterator = finalCloneListPerFunction.iterator();
+		
+		while (finalCloneListPerFunctionIterator.hasNext()) {
+			final Pair<String, colition> clone = finalCloneListPerFunctionIterator.next();
+			System.out.println("Ubicacion del codigo en el metodo: " + funcName + " " + clone.b.getThisFunc());
+			System.out.println("Clon detectado en el método: " + clone.a + " " + clone.b.getThatFunc() + "\n");
+			json.cloneToJson(clonArray, funcName, clone.a, clone.b.getThisFunc(), clone.b.getThatFunc());
+		}
+		
+		
+
+	}
 	
+	public void saveResults() {
+		json.generateJson(clonArray);
 	}
 
 }
